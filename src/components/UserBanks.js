@@ -145,7 +145,7 @@ const UserBanks = () => {
                 <DialogTitle>Send amount</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Add some amount to your bank account ({selectedBank ? selectedBank.bankName : ''})!
+                        Send amount to another bank!
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -167,7 +167,9 @@ const UserBanks = () => {
                         onChange={changeSelectValue}
                     >
                         {receiverUserBanks.map(userBank => (
-                            <MenuItem key={userBank.bank.bankId} value={userBank}>{`${userBank.user.name} (${userBank.bank.name})`}</MenuItem>
+                            <MenuItem key={userBank.bank.bankId} value={userBank}>
+                                {`${userBank.user.name} (${userBank.bank.name})`}
+                            </MenuItem>
                         ))}
                     </Select>
                 </DialogContent>
