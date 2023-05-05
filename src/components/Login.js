@@ -1,10 +1,9 @@
-import {Grid, TextField} from "@mui/material";
+import {Container, Grid, TextField} from "@mui/material";
 import * as React from 'react';
 import Button from "@mui/material/Button";
 import {useRef, useState} from "react";
 import AuthService from "../services/auth.service";
 import {useNavigate} from "react-router-dom";
-import Box from "@mui/material/Box";
 
 const Login = () => {
     const [email, setEmail] = useState("")
@@ -35,7 +34,7 @@ const Login = () => {
     return (
         <div>
             <h1>Login</h1>
-            <Box component="form" onSubmit={handleLogin} ref={form}>
+            <Container component="form" onSubmit={handleLogin} ref={form}>
                 <Grid>
                     <Grid style={{ margin: 10 }}>
                         <TextField label="Email address" value={email} variant="outlined" type="email" required onChange={onChangeEmail} />
@@ -49,7 +48,7 @@ const Login = () => {
                         </Button>
                     </Grid>
                 </Grid>
-            </Box>
+            </Container>
         </div>
     )
 }

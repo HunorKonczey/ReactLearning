@@ -1,6 +1,6 @@
 import axios from "axios";
 import authHeader from "./auth-header";
-import {BANK_URL, USER_BANK_URL} from "../constants/urls";
+import { BANK_URL, USER_BANK_URL } from "../constants/urls";
 
 const deleteBank = (id) => {
     return axios.delete(BANK_URL, {
@@ -27,6 +27,14 @@ const getUserBanksWithAmounts = async () => {
 const getUserBanksWithoutLoggedUser = async () => {
     const userBanks = await axios.get(USER_BANK_URL + "others", { headers: authHeader() })
     return userBanks.data
+}
+
+const addBank = async (bankName, foundationDate) => {
+    const bank = await axios.post(BANK_URL,
+        { bankName, foundationDate },
+        { headers: authHeader() })
+        .then()
+    return bank.data
 }
 
 const addUserBank = async (bankId) => {
@@ -58,6 +66,7 @@ const BankService = {
     getUserBanks,
     getUserBanksWithAmounts,
     getUserBanksWithoutLoggedUser,
+    addBank,
     addUserBank,
     deleteUserBank,
     addAmount

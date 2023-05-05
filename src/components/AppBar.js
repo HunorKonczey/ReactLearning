@@ -13,6 +13,8 @@ import {useEffect, useState} from "react";
 import AuthService from "../services/auth.service";
 import {Grid} from "@mui/material";
 import UserBanks from "./UserBanks";
+import Transactions from "./Transactions";
+import AddBank from "./AddBank";
 
 const ButtonAppBar = () => {
     const [showAdminBoard, setShowAdminBoard] = useState(false)
@@ -66,6 +68,11 @@ const ButtonAppBar = () => {
                                 </Link>
                             </Button>
                             <Button color="inherit">
+                                <Link to={"/transactions"}>
+                                    Transactions
+                                </Link>
+                            </Button>
+                            <Button color="inherit">
                                 <a href="/login" onClick={logOut}>
                                     LogOut
                                 </a>
@@ -81,11 +88,11 @@ const ButtonAppBar = () => {
             </AppBar>
             <div>
                 <Routes>
-                    {/*<Route path="/" element={<Home/>} />*/}
                     <Route path="/login" element={<Login />} />
                     {<Route path="/banks" element={<Banks />} />}
+                    {<Route path="/addBanks" element={<AddBank />} />}
                     {<Route path="/userbanks" element={<UserBanks />} />}
-                    {/*<Route path="/register" element={<Register/>} />*/}
+                    {<Route path="/transactions" element={<Transactions />} />}
                 </Routes>
             </div>
         </Box>

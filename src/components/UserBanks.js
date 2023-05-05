@@ -3,9 +3,11 @@ import {useEffect, useState} from "react";
 import BankService from "../services/bank.service";
 import Box from "@mui/material/Box";
 import {
+    Alert,
+    Container,
     Dialog, DialogActions,
     DialogContent, DialogContentText,
-    DialogTitle, MenuItem, Select,
+    DialogTitle, MenuItem, Select, Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -18,6 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SendIcon from '@mui/icons-material/Send';
 import Button from "@mui/material/Button";
+import TransactionService from "../services/transaction.service";
 
 const UserBanks = () => {
     const [userBanks, setUserBanks] = useState([])
@@ -26,7 +29,8 @@ const UserBanks = () => {
     const [openTransactionDialog, setOpenTransactionDialog] = useState(false)
     const [selectedBank, setSelectedBank] = useState({})
     const [receiverBank, setReceiverBank] = useState({})
-    const [amount, setAmount] = useState({})
+    const [amount, setAmount] = useState(0)
+    const [showSnackBar, setShowSnackBar] = useState(false)
 
     async function fetchUserBanks() {
         const userBanks = await BankService.getUserBanksWithAmounts()
@@ -35,6 +39,9 @@ const UserBanks = () => {
 
     async function fetchReceiverUserBanks() {
         const userBanks = await BankService.getUserBanksWithoutLoggedUser()
+        if (userBanks.length) {
+            setReceiverBank(userBanks[0])
+        }
         setReceiverUserBanks(userBanks)
     }
 
@@ -47,21 +54,25 @@ const UserBanks = () => {
     const handleDialogOpen = (bank) => {
         setSelectedBank(bank)
         setOpenDialog(true)
+        setAmount(0)
     }
 
     const handleTransactionDialogOpen = (bank) => {
         setSelectedBank(bank)
         setOpenTransactionDialog(true)
+        setAmount(0)
     }
 
     const handleDialogClose = () => {
         setSelectedBank({})
         setOpenDialog(false)
+        setAmount(0)
     }
 
     const handleTransactionDialogClose = () => {
         setSelectedBank({})
         setOpenTransactionDialog(false)
+        setAmount(0)
     }
 
     const changeAmount = (e) => {
@@ -78,44 +89,63 @@ const UserBanks = () => {
         await fetchUserBanks()
     }
 
+    const saveTransaction = async () => {
+        const error = await TransactionService.saveTransaction(selectedBank.userBankId, receiverBank.id, amount)
+        handleTransactionDialogClose()
+        if (error) {
+            handleOpenSnackBar()
+        } else {
+            await fetchUserBanks()
+        }
+    }
+
+    const handleOpenSnackBar = () => {
+        setShowSnackBar(true)
+    }
+
+    const handleCloseSnackBar = () => {
+        setShowSnackBar(false)
+    }
+
     useEffect(() => {
         fetchUserBanks()
         fetchReceiverUserBanks()
-
     }, [])
 
     return (
         <TableContainer component={Box}>
-            <Table aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="left">Name</TableCell>
-                        <TableCell align="left">Created date</TableCell>
-                        <TableCell align="left">Account amount</TableCell>
-                        <TableCell align="left">Actions</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {userBanks.map(userBank => (
-                        <TableRow key={userBank.userBankId}>
-                            <TableCell align="left">{userBank.bankName}</TableCell>
-                            <TableCell align="left">{userBank.createdDate}</TableCell>
-                            <TableCell align="left">{userBank.accountAmount}</TableCell>
-                            <TableCell align="left">
-                                <IconButton edge="end" aria-label="add" onClick={() => handleDialogOpen(userBank)}>
-                                    <AddIcon />
-                                </IconButton>
-                                <IconButton edge="end" aria-label="send" onClick={() => handleTransactionDialogOpen(userBank)}>
-                                    <SendIcon />
-                                </IconButton>
-                                <IconButton edge="end" aria-label="delete" onClick={() => deleteUserBank(userBank.userBankId)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </TableCell>
+            <Container>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left">Created date</TableCell>
+                            <TableCell align="left">Account amount</TableCell>
+                            <TableCell align="center">Actions</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHead>
+                    <TableBody>
+                        {userBanks.map(userBank => (
+                            <TableRow key={userBank.userBankId}>
+                                <TableCell align="left">{userBank.bankName}</TableCell>
+                                <TableCell align="left">{userBank.createdDate}</TableCell>
+                                <TableCell align="left">{userBank.accountAmount}</TableCell>
+                                <TableCell align="center">
+                                    <IconButton edge="end" aria-label="add" onClick={() => handleDialogOpen(userBank)}>
+                                        <AddIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="send" onClick={() => handleTransactionDialogOpen(userBank)}>
+                                        <SendIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="delete" onClick={() => deleteUserBank(userBank.userBankId)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </Container>
 
             <Dialog open={openDialog} onClose={handleDialogClose}>
                 <DialogTitle>Add amount</DialogTitle>
@@ -158,7 +188,6 @@ const UserBanks = () => {
                         value={amount}
                         onChange={(e) => changeAmount(e)}
                     />
-
                     <Select
                         id="receiver_bank"
                         value={receiverBank}
@@ -167,7 +196,7 @@ const UserBanks = () => {
                         onChange={changeSelectValue}
                     >
                         {receiverUserBanks.map(userBank => (
-                            <MenuItem key={userBank.bank.bankId} value={userBank}>
+                            <MenuItem key={userBank.bank.id} value={userBank}>
                                 {`${userBank.user.name} (${userBank.bank.name})`}
                             </MenuItem>
                         ))}
@@ -175,9 +204,15 @@ const UserBanks = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleTransactionDialogClose}>Cancel</Button>
-                    <Button onClick={sendAmount}>Send</Button>
+                    <Button onClick={saveTransaction}>Send</Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={showSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+                <Alert onClose={handleCloseSnackBar} severity="warning" sx={{ width: '100%' }}>
+                    Not enough amount for this transaction!!
+                </Alert>
+            </Snackbar>
         </TableContainer>
     )
 }

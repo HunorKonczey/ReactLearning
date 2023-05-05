@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
 import BankService from "../services/bank.service";
-import {Avatar, List, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
-import Box from "@mui/material/Box";
+import {Avatar, Container, List, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
@@ -33,7 +32,7 @@ const Banks = () => {
     }, [])
 
     return (
-        <Box>
+        <Container>
             <List>
                 {banks.map((bank, i) => {
                     const itemName = `${bank.name} (${bank.foundationDate})`
@@ -55,7 +54,7 @@ const Banks = () => {
                     </ListItem>
                 })}
             </List>
-        </Box>
+        </Container>
     )
 }
 
