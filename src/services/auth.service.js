@@ -7,6 +7,10 @@ const register = (name, email, password) => {
         name,
         email,
         password
+    }).then(response => {
+        if (response.data.email != null) {
+            return login(email, password)
+        }
     });
 };
 

@@ -6,9 +6,7 @@ const saveTransaction = async (senderUserBankId, receiverUserBankId, transaction
     return await axios.post(TRANSACTION_URL,
         { senderUserBankId, receiverUserBankId, transactionValue },
         { headers: authHeader() })
-        .catch(error => {
-            return error.response.data.error_message
-        })
+        .catch(error => error.response)
 }
 
 const getTransactions = async () => {

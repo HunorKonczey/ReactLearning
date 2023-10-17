@@ -47,9 +47,8 @@ const addUserBank = async (bankId) => {
     return userBank.data
 }
 
-const deleteUserBank = async (bankId) => {
-    await axios.delete(USER_BANK_URL,{
-        params: { bankId },
+const deleteUserBank = async (id) => {
+    await axios.get(`${USER_BANK_URL}delete/${id}`,{
         headers: authHeader()
     }).then()
 }

@@ -5,6 +5,7 @@ import {Avatar, Container, List, ListItem, ListItemAvatar, ListItemText} from "@
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
+import Paper from '@mui/material/Paper';
 
 const Banks = () => {
     const [banks, setBanks] = useState([])
@@ -32,26 +33,28 @@ const Banks = () => {
     }, [])
 
     return (
-        <Container>
+        <Container sx={{ my: 2 }}>
             <List>
                 {banks.map((bank, i) => {
                     const itemName = `${bank.name} (${bank.foundationDate})`
-                    return <ListItem key={i}
-                        secondaryAction={
-                            (!userBanks.find(userBanks => userBanks.bank.id === bank.id) ?
-                                    <IconButton edge="end" aria-label="add" onClick={() => addBank(bank.id)}>
-                                        <AddIcon />
-                                    </IconButton> : ''
-                            )
-                        }
-                    >
-                        <ListItemAvatar>
-                            <Avatar>
-                                <CreditCardIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText id={bank.id} primary={itemName}></ListItemText>
-                    </ListItem>
+                    return <Paper variant="elevation" elevation={2} sx={{ marginBottom: 2 }}>
+                            <ListItem key={i}
+                                secondaryAction={
+                                    (!userBanks.find(userBanks => userBanks.bank.id === bank.id) ?
+                                            <IconButton edge="end" aria-label="add" onClick={() => addBank(bank.id)}>
+                                                <AddIcon />
+                                            </IconButton> : ''
+                                    )
+                                }
+                            >
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <CreditCardIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText id={bank.id} primary={itemName}></ListItemText>
+                        </ListItem>
+                    </Paper>
                 })}
             </List>
         </Container>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
     Container,
     Table,
@@ -36,14 +36,14 @@ const Transactions = () => {
     }, [])
 
     return (
-        <TableContainer>
+        <TableContainer sx={{ my: 2 }}>
             <Container>
-                <Typography sx={{p: 1}} variant="h5" component="h4">
+                <Typography sx={{ p: 1 }} variant="h5" component="h4">
                     Sent transactions
                 </Typography>
                 <Table aria-label="simple table">
                     <TableHead>
-                        <TableRow>
+                        <TableRow style={{ background: '#94e1fc' }}>
                             <TableCell align="left">Sender bank</TableCell>
                             <TableCell align="left">Receiver bank</TableCell>
                             <TableCell align="left">Transaction date</TableCell>
@@ -73,12 +73,12 @@ const Transactions = () => {
             </Container>
 
             <Container>
-                <Typography sx={{p: 1}} variant="h5" component="h5">
+                <Typography sx={{ p: 1 }} variant="h5" component="h5">
                     Received transactions
                 </Typography>
                 <Table aria-label="simple table">
                     <TableHead>
-                        <TableRow>
+                        <TableRow style={{ background: '#94e1fc' }}>
                             <TableCell align="left">Receiver bank</TableCell>
                             <TableCell align="left">Sender bank</TableCell>
                             <TableCell align="left">Transaction date</TableCell>

@@ -26,6 +26,7 @@ const UserBanks = () => {
     const [userBanks, setUserBanks] = useState([])
     const [receiverUserBanks, setReceiverUserBanks] = useState([])
     const [openDialog, setOpenDialog] = useState(false)
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
     const [openTransactionDialog, setOpenTransactionDialog] = useState(false)
     const [selectedBank, setSelectedBank] = useState({})
     const [receiverBank, setReceiverBank] = useState({})
@@ -45,12 +46,6 @@ const UserBanks = () => {
         setReceiverUserBanks(userBanks)
     }
 
-    const deleteUserBank = async (userBankId) => {
-        await BankService.deleteUserBank(userBankId)
-        const updatedUserBanks = [...userBanks].filter(bank => bank.userBankId !== userBankId)
-        setUserBanks(updatedUserBanks)
-    }
-
     const handleDialogOpen = (bank) => {
         setSelectedBank(bank)
         setOpenDialog(true)
@@ -63,6 +58,11 @@ const UserBanks = () => {
         setAmount(0)
     }
 
+    const handleDeleteDialogOpen = (bank) => {
+        setSelectedBank(bank)
+        setOpenDeleteDialog(true)
+    }
+
     const handleDialogClose = () => {
         setSelectedBank({})
         setOpenDialog(false)
@@ -73,6 +73,11 @@ const UserBanks = () => {
         setSelectedBank({})
         setOpenTransactionDialog(false)
         setAmount(0)
+    }
+
+    const handleDeleteDialogClose = () => {
+        setSelectedBank({})
+        setOpenDeleteDialog(false)
     }
 
     const changeAmount = (e) => {
@@ -90,13 +95,21 @@ const UserBanks = () => {
     }
 
     const saveTransaction = async () => {
-        const error = await TransactionService.saveTransaction(selectedBank.userBankId, receiverBank.id, amount)
+        const response = await TransactionService.saveTransaction(selectedBank.userBankId, receiverBank.id, amount)
         handleTransactionDialogClose()
-        if (error) {
+        if (response.data.error_message) {
             handleOpenSnackBar()
         } else {
             await fetchUserBanks()
         }
+    }
+
+    const deleteUserBank = async () => {
+        const userBankId = selectedBank.userBankId
+        await BankService.deleteUserBank(userBankId)
+        const updatedUserBanks = [...userBanks].filter(bank => bank.userBankId !== userBankId)
+        setUserBanks(updatedUserBanks)
+        handleDeleteDialogClose()
     }
 
     const handleOpenSnackBar = () => {
@@ -113,15 +126,15 @@ const UserBanks = () => {
     }, [])
 
     return (
-        <TableContainer component={Box}>
+        <TableContainer sx={{ my: 2 }} component={Box}>
             <Container>
                 <Table aria-label="simple table">
                     <TableHead>
-                        <TableRow>
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Created date</TableCell>
-                            <TableCell align="left">Account amount</TableCell>
-                            <TableCell align="center">Actions</TableCell>
+                        <TableRow style={{ background: '#94e1fc' }}>
+                            <TableCell variant="head" align="left">Name</TableCell>
+                            <TableCell variant="head" align="left">Created date</TableCell>
+                            <TableCell variant="head" align="left">Account amount</TableCell>
+                            <TableCell variant="head" align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -137,7 +150,7 @@ const UserBanks = () => {
                                     <IconButton edge="end" aria-label="send" onClick={() => handleTransactionDialogOpen(userBank)}>
                                         <SendIcon />
                                     </IconButton>
-                                    <IconButton edge="end" aria-label="delete" onClick={() => deleteUserBank(userBank.userBankId)}>
+                                    <IconButton edge="end" aria-label="delete"  onClick={() => handleDeleteDialogOpen(userBank)}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </TableCell>
@@ -205,6 +218,19 @@ const UserBanks = () => {
                 <DialogActions>
                     <Button onClick={handleTransactionDialogClose}>Cancel</Button>
                     <Button onClick={saveTransaction}>Send</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openDeleteDialog} onClose={handleDeleteDialogClose}>
+                <DialogTitle>Delete user bank</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure to delete this bank account: {selectedBank ? selectedBank.bankName : ''}?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteDialogClose}>Disagree</Button>
+                    <Button onClick={deleteUserBank} autoFocus>Agree</Button>
                 </DialogActions>
             </Dialog>
 
