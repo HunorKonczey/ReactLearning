@@ -1,4 +1,4 @@
-FROM node:19-alpine
+FROM node:16.17.0
 WORKDIR /react-first/
 COPY public/ /react-first/public
 COPY src/ /react-first/src
