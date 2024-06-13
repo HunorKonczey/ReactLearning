@@ -13,6 +13,18 @@
   }
 }
 
+.light-theme {
+  color: rgba(12, 12, 12, 0.9);
+  background-color: white;
+  height: 100vh;
+}
+
+.dark-theme {
+  background-color: rgba(12, 12, 12, 0.9);
+  color: white;
+  height: 100vh;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

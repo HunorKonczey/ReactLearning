@@ -1,15 +1,14 @@
-body {
-    background-image: linear-gradient(to right, rgba(148,225,252,0), rgb(204, 236, 253));
+.toolbar a, .toolbar a:visited, .toolbar a:active {
+  text-decoration: none;
+  color: white;
 }
-a, a:visited, a:active {
-    text-decoration: none;
-    color: white;
+
+.toolbar a:hover {
+  color: #80cbc4;
 }
-a:hover {
-    color: #94e1fc;
-}
+
 .sub-list a, .sub-list a:visited, .sub-list a:active {
-    text-decoration: none;
-    color: blue;
+  text-decoration: none;
+  color: #00897b;
 }
 
